@@ -22,28 +22,30 @@ struct studentNode
     studentNode* next;
 };
 
-int colStudentCounter = 5;
-int colStudentID = 12; //sets the column size for the table
-int colLastName = 15;
-int colFirstName = 24;
-int colBirthday = 15;
-int colAddress = 24;
-int colGender = 7;
+int colStudentCounter = 6;
+int colStudentID = 13; //sets the column size for the table
+int colLastName = 16;
+int colFirstName = 20;
+int colBirthday = 14;
+int colAddress = 49;
+int colGender = 10;
 int colprogram = 10;
-int colYearLevel = 10;
+int colYearLevel = 12;
 
-void pressToContinue();
-void addRecord(studentNode*& head);
 // void searchRecord(const std::vector<Student> &students);
-void displayAllRecords(studentNode* head, std::fstream& studentRecords);
 // void deleteRecord(std::vector<Student> &students);
-bool checkIDAvailability(studentNode* head, int studentidattempt);
-void saveRecordsToFile(studentNode* head, std::fstream& studentRecords);
 void loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords);
+void saveRecordsToFile(studentNode* head, std::fstream& studentRecords);
+void addRecord(studentNode*& head);
+bool checkIDAvailability(studentNode* head, int studentidattempt);
+void searchRecord (studentNode* head, studentDetails search);
+void displayAllRecords(studentNode* head, std::fstream& studentRecords);
 void freeMemory (studentNode* head);
+void pressToContinue();
 
 int main()
 {
+    studentDetails search;
     bool inMenu = true;
     studentNode* head = nullptr;
     std::fstream studentRecords;
@@ -90,7 +92,7 @@ int main()
                         "|                                                                                                |\n"
                         "|                                         SEARCH RECORD                                          |\n"
                         "|________________________________________________________________________________________________|\n\n";
-            // searchRecord(students);
+            searchRecord (head, search);
             pressToContinue();
             break;
         case 3:
@@ -256,7 +258,6 @@ void addRecord(studentNode*& head)
                 std::cout<<"\nInvalid student ID! With year 2024 and below only!\n\n";   
             }
         } while (newStudent->studentInfo.studentID < 0 || newStudent->studentInfo.studentID > 202499999);
-        std::cout<<newStudent->studentInfo.studentID;
         if (!checkIDAvailability(head, newStudent->studentInfo.studentID))
         {
             std::cout<<"\nThat student ID already exists!\n\n";
@@ -268,7 +269,7 @@ void addRecord(studentNode*& head)
     getline(std::cin, newStudent->studentInfo.lastName);
     std::cout << "Enter First Name: ";
     getline(std::cin, newStudent->studentInfo.firstName);
-    std::cout << "Enter Birthday: ";
+    std::cout << "Enter Birthday [MM/DD/YYYY]: ";
     getline(std::cin, newStudent->studentInfo.birthday);
     std::cout << "Enter Address: ";
     getline(std::cin, newStudent->studentInfo.address);
@@ -370,84 +371,133 @@ bool checkIDAvailability(studentNode* head, int studentidattempt)
     return true;
 }
 
-void displayAllRecords(studentNode* head, std::fstream& studentRecords)
+void searchRecord (studentNode* head, studentDetails search)
 {
-    system("cls");
-    
-    std::cout << " ________________________________________________________________________________________________\n"
-                "|                                                                                                |\n"
-                "|                                      DISPLAY ALL RECORDS                                       |\n"
-                "|________________________________________________________________________________________________|\n\n";
-
-    if (head == nullptr)
+    studentNode* current = head;
+    if (current == nullptr)
     {
         std::cout<<"No data to be displayed. Please input at least one data.\n\n";
     }
     else
     {
-        std::cout<<" _________________________________________________________________________________________________"
-                <<"______________________________________________________________\n";
-        std::cout<<"| "<<std::setw(colStudentCounter)<<std::left<<"No."<<"|| "
-                        <<std::setw(colStudentID)<<std::left<<"Student ID"<<"|| "
-                        <<std::setw(colLastName)<<std::left<<"Last Name"<<"|| "
-                        <<std::setw(colFirstName)<<std::left<<"First Name"<<"|| "
-                        <<std::setw(colBirthday)<<std::left<<"Birthday"<<"|| "
-                        <<std::setw(colAddress)<<std::left<<"Address"<<"|| "
-                        <<std::setw(colGender)<<std::left<<"Gender"<<"|| "
-                        <<std::setw(colprogram)<<std::left<<"Program"<<"|| "
-                        <<std::setw(colYearLevel)<<std::left<<"Year Level"<<"|";
+        std::cout << "How do you want to search?\n\n"
+                    << "[1] Search by Student ID\n"
+                    << "[2] Search by Last Name\n"
+                    << "[3] Search by First Name\n"
+                    << "[4] Search by Gender\n"
+                    << "[5] Search by Degree Program\n"
+                    << "[6] Search by Year Level\n\n"
+                    << "Please type your selection [1-5]: ";
+        int choiceSearch;
+        std::cin >> choiceSearch;
+        switch (choiceSearch)
+        {
+            case 1:
+                do
+                {
+                    std::cout << "\nEnter Student ID Number: ";
+                    while (!(std::cin >> search.studentID))
+                    { // only inputs integer
+                        std::cout << "\nNot a number!\n\n";
+                        std::cin.clear();
+                        std::cin.ignore(512, '\n');
+                        std::cout << "Enter Student ID Number: ";
+                    }
+                    if (search.studentID < 0 || search.studentID > 202499999)
+                    {
+                        std::cout << "\nInvalid student ID! With year 2024 and below only!\n\n";
+                    }
+                } while (search.studentID < 0 || search.studentID > 202499999);
+                
+                while (current)
+                {
+                    if (search.studentID == current->studentInfo.studentID)
+                    {
+                        std::cout<<"Found student";
+                    }
+                current = current->next;
+                }
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
+                break;
+            default:
+                std::cin.clear();
+                std::cin.ignore(10000, '\n'); // prevents input from looping
+                std::cout << "\nInvalid selection! Press any key to try again.";
+                system("pause>0");
+        }
+    }
+}
+
+void displayAllRecords(studentNode* head, std::fstream& studentRecords)
+{
+    system("cls");
+    std::cout << " ________________________________________________________________________________________________\n"
+                "|                                                                                                |\n"
+                "|                                      DISPLAY ALL RECORDS                                       |\n"
+                "|________________________________________________________________________________________________|\n\n";
+    int studentCounter = 1;
+    if (head == nullptr)
+    {
+        std::cout << "No data to be displayed. Please input at least one data.\n\n";
+    }
+    else
+    {
+        std::cout << "Set window to fullscreen for better viewing.\n\n";
+
+        std::cout << "|" <<
+            std::setfill('-') << std::setw(158) << "" << "|\n";
+
+        std::cout <<"| " << std::setfill(' ') << 
+        std::setw(colStudentCounter-1) << std::left << "NO." << "| " << 
+        std::setw(colStudentID-1) << std::left << "STUDENT ID" << "| " << 
+        std::setw(colLastName-1) << std::left << "LAST NAME" << "| " <<
+        std::setw(colFirstName-1) << std::left << "FIRST NAME" << "| " <<
+        std::setw(colBirthday-1) << std::left << "BIRTHDAY" << "| " << 
+        std::setw(colAddress-1) << std::left << "ADDRESS" << "| " <<
+        std::setw(colGender-1) << std::left << "GENDER" << "| " <<
+        std::setw(colprogram-1) << std::left << "PROGRAM" << "| " <<
+        std::setw(colYearLevel-1) << std::left << "YEAR LEVEL" << "|";
 
         while (head != nullptr)
-        {
-            std::cout<<"\n|=============||================||=========================||=========================||========|\n";
-            std::cout<<"| "<<std::setw(colStudentCounter)<<std::left<<"No."<<"|| "
-                        <<std::setw(colStudentID)<<std::left<<head->studentInfo.studentID<<"|| "
-                        <<std::setw(colLastName)<<std::left<<head->studentInfo.lastName<<"|| "
-                        <<std::setw(colFirstName)<<std::left<<head->studentInfo.firstName<<"|| "
-                        <<std::setw(colBirthday)<<std::left<<head->studentInfo.birthday<<"|| "
-                        <<std::setw(colAddress)<<std::left<<head->studentInfo.address<<"|| "
-                        <<std::setw(colGender)<<std::left<<head->studentInfo.gender<<"|| "
-                        <<std::setw(colprogram)<<std::left<<head->studentInfo.program<<"|| "
-                        <<std::setw(colYearLevel)<<std::left<<head->studentInfo.yearLevel<<"|";
+        {   
+            std::cout << "\n|" << std::setfill('-') <<
+            std::setw(colStudentCounter) << "" << "|" <<
+            std::setw(colStudentID) << "" << "|" <<
+            std::setw(colLastName) << "" << "|" <<
+            std::setw(colFirstName) << "" << "|" <<
+            std::setw(colBirthday) << "" << "|" <<
+            std::setw(colAddress) << "" << "|" <<
+            std::setw(colGender) << "" << "|" <<
+            std::setw(colprogram) << "" << "|" <<
+            std::setw(colYearLevel) << "" << "|\n";
+
+            std::cout << "| " << std::setfill(' ') << 
+            std::setw(colStudentCounter-1) << std::left << studentCounter << "| " <<
+            std::setw(colStudentID-1) << std::left << head->studentInfo.studentID << "| " << 
+            std::setw(colLastName-1) << std::left << head->studentInfo.lastName << "| " <<
+            std::setw(colFirstName-1) << std::left << head->studentInfo.firstName << "| " <<
+            std::setw(colBirthday-1) << std::left << head->studentInfo.birthday << "| " <<
+            std::setw(colAddress-1) << std::left << head->studentInfo.address << "| " <<
+            std::setw(colGender-1) << std::left << head->studentInfo.gender << "| " <<
+            std::setw(colprogram-1) << std::left << head->studentInfo.program << "| "<<
+            std::setw(colYearLevel-1) << std::left << head->studentInfo.yearLevel << "|";
+            studentCounter++;
             head = head->next;
         }
-        std::cout<<"\n _________________________________________________________________________________________________"
-                <<"______________________________________________________________\n\n";
+        std::cout << "\n|" <<
+        std::setfill('-') << std::setw(158) << "" << "|\n\n";
     }
 
 }
-// Function to search for a record
-// void searchRecord(const std::vector<Student> &students)
-// {
-//     int searchID;
-//     std::cout << "Enter Student ID to search: ";
-//     std::cin >> searchID;
-
-//     bool found = false;
-//     for (const auto &student : students)
-//     {
-//         if (student.studentID == searchID)
-//         {
-//             std::cout << "\nStudent found:\n\n"
-//                 << "Student ID: " << student.studentID << std::endl
-//                 << "Full Name: " << student.fullName << std::endl
-//                 << "Birthday: " << student.birthday << std::endl
-//                 << "Address: " << student.address << std::endl
-//                 << "Gender: " << student.gender << std::endl
-//                 << "Degree Program: " << student.program << std::endl
-//                 << "Year Level: " << student.yearLevel << std::endl
-//                 << std::endl;
-//             found = true;
-//             break;
-//         }
-//     }
-//     if (!found)
-//     {
-//         std::cout << "Student not found.\n";
-//     }
-// }
-
-
 
 // Function to delete a record
 // void deleteRecord(std::vector<Student> &students)

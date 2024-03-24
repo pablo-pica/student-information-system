@@ -1,5 +1,6 @@
 
-202312008,Valencia,John Rainier,February 11 2004,61 San Francisco,Male,BSCSSE,5th Year
-202311373,Agustin,KEanu,April,ilang ilang,Male,IT,4th Year
-202114125,Espenilla,Kimberly,December 24,cavite,Female,BSCSSE,4th Year
-20241512,Santos,Jericho,November,Palawan,Male,BSECE,1st Year
+202312008,Valencia,John Rainier,02/11/2004,61 San Francisco,Male,BSCSSE,5th Year
+202311373,Agustin,KEanu,04/25/2005,ilang ilang,Male,IT,4th Year
+202114125,Espenilla,Kimberly,09/11/2001,cavite,Female,BSCSSE,4th Year
+20241512,Santos,Jericho,11/25/2003,Palawan,Male,BSECE,1st Year
+202412451,Grun,David,01/14/25,mindoro,Male,BSCE,2nd Year
