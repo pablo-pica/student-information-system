@@ -1,5 +1,5 @@
 
-2023,james,lebron,april,califonia,m,it,2
-202311373,Valencia,John Rainier,FEbraury,61 San francisco,M,BSCSSE,2
-12008,agusin,keanu,february,61 san francisco,M,BSCSSE,2
-2023112,asdasd,asdas,das,asdasd,f,asd,2
+202312008,Valencia,John Rainier,February 11 2004,61 San Francisco,Male,BSCSSE,5th Year
+202311373,Agustin,KEanu,April,ilang ilang,Male,IT,4th Year
+202114125,Espenilla,Kimberly,December 24,cavite,Female,BSCSSE,4th Year
+20241512,Santos,Jericho,November,Palawan,Male,BSECE,1st Year

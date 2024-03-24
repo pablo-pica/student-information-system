@@ -11,9 +11,9 @@ struct studentDetails              // Structure to hold student information
     std::string firstName;
     std::string birthday;
     std::string address;
-    char gender;
+    std::string gender;
     std::string program;
-    int yearLevel;
+    std::string yearLevel;
 };
 
 struct studentNode
@@ -62,12 +62,12 @@ int main()
                     "|                         WELCOME TO GROUP 1 STUDENT INFORMATION SYSTEM                          |\n"
                     "|________________________________________________________________________________________________|\n\n"
                 << "What do you want to do?\n\n"
-                << "1. Add New Record\n"
-                << "2. Search Record\n"
-                << "3. Display All Records\n"
-                << "4. Delete Record\n"
-                << "5. Exit\n\n"
-                << "Please type your selection: ";
+                << "[1] Add New Record\n"
+                << "[2] Search Record\n"
+                << "[3] Display All Records\n"
+                << "[4] Delete Record\n"
+                << "[5] Exit\n\n"
+                << "Please type your selection [1-5]: ";
 
         int choice;
         std::cin >> choice;
@@ -167,16 +167,16 @@ int main()
 
 void loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords)       // Function to read records from file
 {
-    std::cout << "Reading records from file...\n\n";
     studentRecords.open("student_records.txt", std::ios::in);
     if (!studentRecords.is_open())
     {
-        std::cerr << "Unable to open file.\n";
+        std::cerr << "File not found or unable to open.\n\n";
         return;
     }
     else
     {
-        while (studentRecords)
+        std::cout << "Reading records from file...\n\n";
+        while (!studentRecords.eof())
         {
             studentNode* newStudent = new studentNode;
             newStudent->next = nullptr;
@@ -187,11 +187,9 @@ void loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords)      
             getline(studentRecords, newStudent->studentInfo.firstName, ',');
             getline(studentRecords, newStudent->studentInfo.birthday, ',');
             getline(studentRecords, newStudent->studentInfo.address, ',');
-            studentRecords >> newStudent->studentInfo.gender;
-            studentRecords.ignore();
+            getline(studentRecords, newStudent->studentInfo.gender, ',');
             getline(studentRecords, newStudent->studentInfo.program, ',');
-            studentRecords >> newStudent->studentInfo.yearLevel;
-            studentRecords.ignore();
+            getline(studentRecords, newStudent->studentInfo.yearLevel);
 
             if (head == nullptr)
             {
@@ -258,6 +256,7 @@ void addRecord(studentNode*& head)
                 std::cout<<"\nInvalid student ID! With year 2024 and below only!\n\n";   
             }
         } while (newStudent->studentInfo.studentID < 0 || newStudent->studentInfo.studentID > 202499999);
+        std::cout<<newStudent->studentInfo.studentID;
         if (!checkIDAvailability(head, newStudent->studentInfo.studentID))
         {
             std::cout<<"\nThat student ID already exists!\n\n";
@@ -274,36 +273,72 @@ void addRecord(studentNode*& head)
     std::cout << "Enter Address: ";
     getline(std::cin, newStudent->studentInfo.address);
 
+    char selectGender;
     do
     {
-        std::cout << "Enter Gender (M/F): ";
-        std::cin >> newStudent->studentInfo.gender;
-        if (newStudent->studentInfo.gender != 'M' && newStudent->studentInfo.gender != 'm'
-            && newStudent->studentInfo.gender != 'F' && newStudent->studentInfo.gender != 'f')
+        std::cout << "Enter Gender [M/F]: ";
+        std::cin >> selectGender;
+        if (selectGender != 'M' && selectGender != 'm'
+            && selectGender != 'F' && selectGender != 'f')
         {
             std::cout<<"\nInvalid gender selection!\n\n";
             std::cin.clear();
             std::cin.ignore(10000, '\n');
         }
-    } while (newStudent->studentInfo.gender != 'M' && newStudent->studentInfo.gender != 'm'
-            && newStudent->studentInfo.gender != 'F' && newStudent->studentInfo.gender != 'f');
+    } while (selectGender != 'M' && selectGender != 'm'
+            && selectGender != 'F' && selectGender != 'f');
+
+    switch (selectGender)
+    {
+        case 'm':
+        case 'M':
+            newStudent->studentInfo.gender = "Male";
+            break;
+        case 'f':
+        case 'F':
+            newStudent->studentInfo.gender = "Female";
+            break;
+    }
     
     std::cin.clear();
     std::cin.ignore();
     std::cout << "Enter Degree Program: ";
     getline(std::cin, newStudent->studentInfo.program);
 
+    int selectYearLevel;
     do
     {
-        std::cout << "Enter Year Level (1 - 5): ";
-        std::cin >> newStudent->studentInfo.yearLevel;
-        if (newStudent->studentInfo.yearLevel < 1 || newStudent->studentInfo.yearLevel > 5)
+        std::cout << "Enter Year Level [1 - 5]: ";
+        std::cin >> selectYearLevel;;
+        if (selectYearLevel < 1 || selectYearLevel > 5)
         {
-            std::cout<<"\n\nInvalid year level selection!\n";
+            std::cout<<"\nInvalid year level selection!\n\n";
             std::cin.clear();
         } 
-    } while (newStudent->studentInfo.yearLevel < 1 || newStudent->studentInfo.yearLevel > 5);
-    
+
+    } while (selectYearLevel < 1 || selectYearLevel > 5);
+
+    switch (selectYearLevel)
+    {
+        case 1:
+            newStudent->studentInfo.yearLevel = "1st Year";
+            break;
+        case 2:
+            newStudent->studentInfo.yearLevel = "2nd Year";
+            break;
+        case 3:
+            newStudent->studentInfo.yearLevel = "3rd Year";
+            break;
+        case 4:
+            newStudent->studentInfo.yearLevel = "4th Year";            
+            break;
+        case 5:
+            newStudent->studentInfo.yearLevel = "5th Year";
+            break;
+        default:
+            break;
+    }
+
     std::cout<<std::endl;
 
     if (head == nullptr)
@@ -323,20 +358,14 @@ void addRecord(studentNode*& head)
 
 bool checkIDAvailability(studentNode* head, int studentidattempt)
 {
-    if (head == nullptr)
+    studentNode* current = head;
+    while (current)
     {
-        return true;
-    }
-    else
-    {
-        while (head->next != nullptr)
+        if (current->studentInfo.studentID == studentidattempt)
         {
-            if (head->studentInfo.studentID == studentidattempt)
-            {
-                return false;
-            }
-        head = head->next;
+            return false;
         }
+        current = current->next;
     }
     return true;
 }
@@ -377,16 +406,8 @@ void displayAllRecords(studentNode* head, std::fstream& studentRecords)
                         <<std::setw(colFirstName)<<std::left<<head->studentInfo.firstName<<"|| "
                         <<std::setw(colBirthday)<<std::left<<head->studentInfo.birthday<<"|| "
                         <<std::setw(colAddress)<<std::left<<head->studentInfo.address<<"|| "
-                        <<std::setw(colGender);
-            if (head->studentInfo.gender == 'M' || head->studentInfo.gender == 'm')
-            {
-                std::cout<<"Male"<<"|| ";
-            }
-            else if (head->studentInfo.gender == 'F' || head->studentInfo.gender == 'f')
-            {
-            std::cout<<"Female"<<"|| ";
-            }
-                std::cout<<std::setw(colprogram)<<std::left<<head->studentInfo.program<<"|| "
+                        <<std::setw(colGender)<<std::left<<head->studentInfo.gender<<"|| "
+                        <<std::setw(colprogram)<<std::left<<head->studentInfo.program<<"|| "
                         <<std::setw(colYearLevel)<<std::left<<head->studentInfo.yearLevel<<"|";
             head = head->next;
         }
