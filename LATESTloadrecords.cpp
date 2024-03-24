@@ -37,7 +37,7 @@ void addRecord(studentNode*& head);
 // void searchRecord(const std::vector<Student> &students);
 void displayAllRecords(studentNode* head, std::fstream& studentRecords);
 // void deleteRecord(std::vector<Student> &students);
-// bool validateInput(const std::string &input);
+bool checkIDAvailability(studentNode* head, int studentidattempt);
 void saveRecordsToFile(studentNode* head, std::fstream& studentRecords);
 void loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords);
 void freeMemory (studentNode* head);
@@ -47,6 +47,11 @@ int main()
     bool inMenu = true;
     studentNode* head = nullptr;
     std::fstream studentRecords;
+    system("cls");
+        std::cout << " ________________________________________________________________________________________________\n"
+                    "|                                                                                                |\n"
+                    "|                                    LOADING RECORDS FILE...                                     |\n"
+                    "|________________________________________________________________________________________________|\n\n";
     loadRecordsFromFile(head, studentRecords);
     pressToContinue();
     do
@@ -202,6 +207,7 @@ void loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords)      
                 temp->next = newStudent; 
             }
         }
+        std::cout<<"File successfully read!\n\n";
     }
     studentRecords.close();
 }
@@ -234,23 +240,30 @@ void addRecord(studentNode*& head)
 {
     studentNode* newStudent = new studentNode;
     newStudent -> next = nullptr;
+
     do
     {
-        std::cout << "Enter Student ID Number: ";
-        while (!(std::cin>>newStudent->studentInfo.studentID)) { // only inputs integer
-            std::cout << "\nNot a number!\n\n";
-            std::cin.clear();
-            std::cin.ignore(512, '\n');
-            std::cout<<"Enter Student ID Number: ";
-        }
-        if (newStudent->studentInfo.studentID < 0 || newStudent->studentInfo.studentID > 202499999)
+        do
         {
-            std::cout<<"\nInvalid student ID! With year 2024 and below only!\n\n";   
+            std::cout << "Enter Student ID Number: ";
+            while (!(std::cin>>newStudent->studentInfo.studentID))
+            { // only inputs integer
+                std::cout << "\nNot a number!\n\n";
+                std::cin.clear();
+                std::cin.ignore(512, '\n');
+                std::cout<<"Enter Student ID Number: ";
+            }
+            if (newStudent->studentInfo.studentID < 0 || newStudent->studentInfo.studentID > 202499999)
+            {
+                std::cout<<"\nInvalid student ID! With year 2024 and below only!\n\n";   
+            }
+        } while (newStudent->studentInfo.studentID < 0 || newStudent->studentInfo.studentID > 202499999);
+        if (!checkIDAvailability(head, newStudent->studentInfo.studentID))
+        {
+            std::cout<<"\nThat student ID already exists!\n\n";
         }
-        // std::cin.clear();
-        // std::cin.ignore(512, '\n');
-    } while (newStudent->studentInfo.studentID < 0 || newStudent->studentInfo.studentID > 202499999);
-    
+    } while (!checkIDAvailability(head, newStudent->studentInfo.studentID));
+
     std::cin.ignore();
     std::cout << "Enter Last Name: ";
     getline(std::cin, newStudent->studentInfo.lastName);
@@ -306,6 +319,26 @@ void addRecord(studentNode*& head)
         }
         temp->next = newStudent;
     }
+}
+
+bool checkIDAvailability(studentNode* head, int studentidattempt)
+{
+    if (head == nullptr)
+    {
+        return true;
+    }
+    else
+    {
+        while (head->next != nullptr)
+        {
+            if (head->studentInfo.studentID == studentidattempt)
+            {
+                return false;
+            }
+        head = head->next;
+        }
+    }
+    return true;
 }
 
 void displayAllRecords(studentNode* head, std::fstream& studentRecords)
