@@ -1,8 +1,10 @@
 #include <iostream>
 #include <fstream>
-#include <string>
+// #include <string>
+#include <string.h>
 #include <cstdlib>
 #include <iomanip>
+#include <cctype>
 
 struct studentDetails              // Structure to hold student information
 {
@@ -39,6 +41,7 @@ void saveRecordsToFile(studentNode* head, std::fstream& studentRecords);
 void addRecord(studentNode*& head);
 bool checkIDAvailability(studentNode* head, int studentidattempt);
 void searchRecord (studentNode* head, studentDetails search);
+void displaySpecificRecords (studentNode* current, int studentCounter);
 void displayAllRecords(studentNode* head, std::fstream& studentRecords);
 void freeMemory (studentNode* head);
 void pressToContinue();
@@ -373,68 +376,130 @@ bool checkIDAvailability(studentNode* head, int studentidattempt)
 
 void searchRecord (studentNode* head, studentDetails search)
 {
-    studentNode* current = head;
-    if (current == nullptr)
+    bool inSearchRecord = true;
+    do
     {
-        std::cout<<"No data to be displayed. Please input at least one data.\n\n";
-    }
-    else
-    {
-        std::cout << "How do you want to search?\n\n"
-                    << "[1] Search by Student ID\n"
-                    << "[2] Search by Last Name\n"
-                    << "[3] Search by First Name\n"
-                    << "[4] Search by Gender\n"
-                    << "[5] Search by Degree Program\n"
-                    << "[6] Search by Year Level\n\n"
-                    << "Please type your selection [1-5]: ";
-        int choiceSearch;
-        std::cin >> choiceSearch;
-        switch (choiceSearch)
+        studentNode* current = head;
+        if (current == nullptr)
         {
-            case 1:
-                do
-                {
-                    std::cout << "\nEnter Student ID Number: ";
-                    while (!(std::cin >> search.studentID))
-                    { // only inputs integer
-                        std::cout << "\nNot a number!\n\n";
-                        std::cin.clear();
-                        std::cin.ignore(512, '\n');
-                        std::cout << "Enter Student ID Number: ";
-                    }
-                    if (search.studentID < 0 || search.studentID > 202499999)
-                    {
-                        std::cout << "\nInvalid student ID! With year 2024 and below only!\n\n";
-                    }
-                } while (search.studentID < 0 || search.studentID > 202499999);
-                
-                while (current)
-                {
-                    if (search.studentID == current->studentInfo.studentID)
-                    {
-                        std::cout<<"Found student";
-                    }
-                current = current->next;
-                }
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
-            case 6:
-                break;
-            default:
-                std::cin.clear();
-                std::cin.ignore(10000, '\n'); // prevents input from looping
-                std::cout << "\nInvalid selection! Press any key to try again.";
-                system("pause>0");
+            std::cout<<"No data to be displayed. Please input at least one data.\n\n";
         }
-    }
+        else
+        {
+            system("cls");
+            std::cout << " ________________________________________________________________________________________________\n"
+                        "|                                                                                                |\n"
+                        "|                                         SEARCH RECORD                                          |\n"
+                        "|________________________________________________________________________________________________|\n\n";
+            std::cout << "How do you want to search?\n\n"
+                        << "[1] Search by Student ID\n"
+                        << "[2] Search by Last Name\n"
+                        << "[3] Search by First Name\n"
+                        << "[4] Search by Gender\n"
+                        << "[5] Search by Degree Program\n"
+                        << "[6] Search by Year Level\n"
+                        << "[7] Exit Search Record Menu\n\n"
+                        << "Please type your selection [1-5]: ";
+            int choiceSearch;
+            int studentCounter = 1;
+            bool foundStudent = false;
+            std::cin >> choiceSearch;
+            switch (choiceSearch)
+            {
+                case 1:
+                    do
+                    {
+                        std::cout << "\nEnter Student ID Number: ";
+                        while (!(std::cin >> search.studentID))
+                        { // only inputs integer
+                            std::cout << "\nNot a number!\n\n";
+                            std::cin.clear();
+                            std::cin.ignore(512, '\n');
+                            std::cout << "Enter Student ID Number: ";
+                        }
+                        if (search.studentID < 0 || search.studentID > 202499999)
+                        {
+                            std::cout << "\nInvalid student ID! With year 2024 and below only!\n\n";
+                        }
+                    } while (search.studentID < 0 || search.studentID > 202499999);
+                    
+                    while (current)
+                    {
+                        if (search.studentID == current->studentInfo.studentID && foundStudent == false)
+                        {
+                            displaySpecificRecords (current, studentCounter);
+                            studentCounter++;
+                            foundStudent = true;
+                        }
+                        current = current->next;
+                    }
+                    if (foundStudent != true)
+                        std::cout << "\nNo student found with id " << search.studentID << "!\n\n";
+                    pressToContinue();
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    inSearchRecord = false;
+                    std::cout << std::endl;
+                    break;
+                default:
+                    std::cin.clear();
+                    std::cin.ignore(10000, '\n'); // prevents input from looping
+                    std::cout << "\nInvalid selection! Press any key to try again.";
+                    system("pause>0");
+            }
+        }
+    } while (inSearchRecord == true);
+}
+
+void displaySpecificRecords (studentNode* current, int studentCounter)
+{
+    std::cout << "\nSet window to fullscreen for better viewing.\n\n";
+
+    std::cout << "|" << std::setfill('-') << std::setw(158) << "" << "|\n";
+
+    std::cout <<"| " << std::setfill(' ') << 
+    std::setw(colStudentCounter-1) << std::left << "NO." << "| " << 
+    std::setw(colStudentID-1) << std::left << "STUDENT ID" << "| " << 
+    std::setw(colLastName-1) << std::left << "LAST NAME" << "| " <<
+    std::setw(colFirstName-1) << std::left << "FIRST NAME" << "| " <<
+    std::setw(colBirthday-1) << std::left << "BIRTHDAY" << "| " << 
+    std::setw(colAddress-1) << std::left << "ADDRESS" << "| " <<
+    std::setw(colGender-1) << std::left << "GENDER" << "| " <<
+    std::setw(colprogram-1) << std::left << "PROGRAM" << "| " <<
+    std::setw(colYearLevel-1) << std::left << "YEAR LEVEL" << "|";
+
+            std::cout << "\n|" << std::setfill('-') <<
+    std::setw(colStudentCounter) << "" << "|" <<
+    std::setw(colStudentID) << "" << "|" <<
+    std::setw(colLastName) << "" << "|" <<
+    std::setw(colFirstName) << "" << "|" <<
+    std::setw(colBirthday) << "" << "|" <<
+    std::setw(colAddress) << "" << "|" <<
+    std::setw(colGender) << "" << "|" <<
+    std::setw(colprogram) << "" << "|" <<
+    std::setw(colYearLevel) << "" << "|\n";
+
+    std::cout << "| " << std::setfill(' ') << 
+    std::setw(colStudentCounter-1) << std::left << studentCounter << "| " <<
+    std::setw(colStudentID-1) << std::left << current->studentInfo.studentID << "| " << 
+    std::setw(colLastName-1) << std::left << current->studentInfo.lastName << "| " <<
+    std::setw(colFirstName-1) << std::left << current->studentInfo.firstName << "| " <<
+    std::setw(colBirthday-1) << std::left << current->studentInfo.birthday << "| " <<
+    std::setw(colAddress-1) << std::left << current->studentInfo.address << "| " <<
+    std::setw(colGender-1) << std::left << current->studentInfo.gender << "| " <<
+    std::setw(colprogram-1) << std::left << current->studentInfo.program << "| "<<
+    std::setw(colYearLevel-1) << std::left << current->studentInfo.yearLevel << "|";
+    std::cout << "\n|" << std::setfill('-') << std::setw(158) << "" << "|\n\n";
 }
 
 void displayAllRecords(studentNode* head, std::fstream& studentRecords)
@@ -453,8 +518,7 @@ void displayAllRecords(studentNode* head, std::fstream& studentRecords)
     {
         std::cout << "Set window to fullscreen for better viewing.\n\n";
 
-        std::cout << "|" <<
-            std::setfill('-') << std::setw(158) << "" << "|\n";
+        std::cout << "|" << std::setfill('-') << std::setw(158) << "" << "|\n";
 
         std::cout <<"| " << std::setfill(' ') << 
         std::setw(colStudentCounter-1) << std::left << "NO." << "| " << 
@@ -493,8 +557,7 @@ void displayAllRecords(studentNode* head, std::fstream& studentRecords)
             studentCounter++;
             head = head->next;
         }
-        std::cout << "\n|" <<
-        std::setfill('-') << std::setw(158) << "" << "|\n\n";
+        std::cout << "\n|" << std::setfill('-') << std::setw(158) << "" << "|\n\n";
     }
 
 }
