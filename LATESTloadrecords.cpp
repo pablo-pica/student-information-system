@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 #include <cstdlib>
-#include <vector>
+#include <iomanip>
 
 struct studentDetails              // Structure to hold student information
 {
@@ -12,7 +12,7 @@ struct studentDetails              // Structure to hold student information
     std::string birthday;
     std::string address;
     char gender;
-    std::string degreeProgram;
+    std::string program;
     int yearLevel;
 };
 
@@ -21,6 +21,16 @@ struct studentNode
     studentDetails studentInfo;
     studentNode* next;
 };
+
+int colStudentCounter = 5;
+int colStudentID = 12; //sets the column size for the table
+int colLastName = 15;
+int colFirstName = 24;
+int colBirthday = 15;
+int colAddress = 24;
+int colGender = 7;
+int colprogram = 10;
+int colYearLevel = 10;
 
 void pressToContinue();
 void addRecord(studentNode*& head);
@@ -174,7 +184,7 @@ void loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords)      
             getline(studentRecords, newStudent->studentInfo.address, ',');
             studentRecords >> newStudent->studentInfo.gender;
             studentRecords.ignore();
-            getline(studentRecords, newStudent->studentInfo.degreeProgram, ',');
+            getline(studentRecords, newStudent->studentInfo.program, ',');
             studentRecords >> newStudent->studentInfo.yearLevel;
             studentRecords.ignore();
 
@@ -216,7 +226,7 @@ void saveRecordsToFile(studentNode* head, std::fstream& studentRecords)         
     }
     studentRecords << temp->studentInfo.studentID << "," << temp->studentInfo.lastName << "," << temp->studentInfo.firstName << ","
                     << temp->studentInfo.birthday << "," << temp->studentInfo.address << "," << temp->studentInfo.gender << ","
-                    << temp->studentInfo.degreeProgram << "," << temp->studentInfo.yearLevel;
+                    << temp->studentInfo.program << "," << temp->studentInfo.yearLevel;
     studentRecords.close();
 }
 
@@ -268,7 +278,7 @@ void addRecord(studentNode*& head)
     std::cin.clear();
     std::cin.ignore();
     std::cout << "Enter Degree Program: ";
-    getline(std::cin, newStudent->studentInfo.degreeProgram);
+    getline(std::cin, newStudent->studentInfo.program);
 
     do
     {
@@ -300,23 +310,57 @@ void addRecord(studentNode*& head)
 
 void displayAllRecords(studentNode* head, std::fstream& studentRecords)
 {
-    std::cout << "Student Records:\n\n";
-    while (head != nullptr)
+    system("cls");
+    
+    std::cout << " ________________________________________________________________________________________________\n"
+                "|                                                                                                |\n"
+                "|                                      DISPLAY ALL RECORDS                                       |\n"
+                "|________________________________________________________________________________________________|\n\n";
+
+    if (head == nullptr)
     {
-        // cout<<"\n|===============================================================================================|\n";
-        // cout<<"| "<<setw(colOne)<<left<<"Student No."<<"|| "<<setw(colTwo)<<left<<"Student ID"
-        //     <<"|| "<<setw(colThree)<<left<<"First Name"<<"|| "<<setw(colFour)<<left<<"Last Name"
-        //     <<"|| "<<setw(colFive)<<left<<"GPA"<<"|";
-        std::cout<< "Student ID: " << head->studentInfo.studentID << std::endl
-                << "Last Name: " << head->studentInfo.lastName << std::endl
-                << "First Name: " << head->studentInfo.firstName << std::endl
-                << "Birthday: " << head->studentInfo.birthday << std::endl
-                << "Address: " << head->studentInfo.address << std::endl
-                << "Gender: " << head->studentInfo.gender << std::endl
-                << "Degree Program: " << head->studentInfo.degreeProgram << std::endl
-                << "Year Level: " << head->studentInfo.yearLevel << std::endl << std::endl;
-        head = head->next;
+        std::cout<<"No data to be displayed. Please input at least one data.\n\n";
     }
+    else
+    {
+        std::cout<<" _________________________________________________________________________________________________"
+                <<"______________________________________________________________\n";
+        std::cout<<"| "<<std::setw(colStudentCounter)<<std::left<<"No."<<"|| "
+                        <<std::setw(colStudentID)<<std::left<<"Student ID"<<"|| "
+                        <<std::setw(colLastName)<<std::left<<"Last Name"<<"|| "
+                        <<std::setw(colFirstName)<<std::left<<"First Name"<<"|| "
+                        <<std::setw(colBirthday)<<std::left<<"Birthday"<<"|| "
+                        <<std::setw(colAddress)<<std::left<<"Address"<<"|| "
+                        <<std::setw(colGender)<<std::left<<"Gender"<<"|| "
+                        <<std::setw(colprogram)<<std::left<<"Program"<<"|| "
+                        <<std::setw(colYearLevel)<<std::left<<"Year Level"<<"|";
+
+        while (head != nullptr)
+        {
+            std::cout<<"\n|=============||================||=========================||=========================||========|\n";
+            std::cout<<"| "<<std::setw(colStudentCounter)<<std::left<<"No."<<"|| "
+                        <<std::setw(colStudentID)<<std::left<<head->studentInfo.studentID<<"|| "
+                        <<std::setw(colLastName)<<std::left<<head->studentInfo.lastName<<"|| "
+                        <<std::setw(colFirstName)<<std::left<<head->studentInfo.firstName<<"|| "
+                        <<std::setw(colBirthday)<<std::left<<head->studentInfo.birthday<<"|| "
+                        <<std::setw(colAddress)<<std::left<<head->studentInfo.address<<"|| "
+                        <<std::setw(colGender);
+            if (head->studentInfo.gender == 'M' || head->studentInfo.gender == 'm')
+            {
+                std::cout<<"Male"<<"|| ";
+            }
+            else if (head->studentInfo.gender == 'F' || head->studentInfo.gender == 'f')
+            {
+            std::cout<<"Female"<<"|| ";
+            }
+                std::cout<<std::setw(colprogram)<<std::left<<head->studentInfo.program<<"|| "
+                        <<std::setw(colYearLevel)<<std::left<<head->studentInfo.yearLevel<<"|";
+            head = head->next;
+        }
+        std::cout<<"\n _________________________________________________________________________________________________"
+                <<"______________________________________________________________\n\n";
+    }
+
 }
 // Function to search for a record
 // void searchRecord(const std::vector<Student> &students)
@@ -336,7 +380,7 @@ void displayAllRecords(studentNode* head, std::fstream& studentRecords)
 //                 << "Birthday: " << student.birthday << std::endl
 //                 << "Address: " << student.address << std::endl
 //                 << "Gender: " << student.gender << std::endl
-//                 << "Degree Program: " << student.degreeProgram << std::endl
+//                 << "Degree Program: " << student.program << std::endl
 //                 << "Year Level: " << student.yearLevel << std::endl
 //                 << std::endl;
 //             found = true;

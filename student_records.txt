@@ -1,7 +1,4 @@
-202311373,John Rainier Valencia,february,61 san,m,bscsse,2
-12312,lebron james,february ,dunking,m,my sunshine,3
-12312,kean uagsutin,april,ilang,f,2,2
-12345,xander dacillo,2023,marinqude,m,,4
-123145,kim espenilla,march,1241,f,5,4
-123,123,123,132,f,bscsse,4
-2,3,31,3,f,,2
+
+202311373,VAlencia,John Rainier,February,61 San,M,BSCSSE,2
+202312008,Agusin,Keanu,april,ilang ilang,m,asd,5
+202313221,asdasd,asdas,dsadsa,asd,f,asdsa,2
