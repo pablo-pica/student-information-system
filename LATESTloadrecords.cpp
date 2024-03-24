@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-// #include <string>
 #include <string.h>
 #include <cstdlib>
 #include <iomanip>
@@ -34,14 +33,15 @@ int colGender = 10;
 int colprogram = 10;
 int colYearLevel = 12;
 
-// void searchRecord(const std::vector<Student> &students);
 // void deleteRecord(std::vector<Student> &students);
 void loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords);
 void saveRecordsToFile(studentNode* head, std::fstream& studentRecords);
 void addRecord(studentNode*& head);
 bool checkIDAvailability(studentNode* head, int studentidattempt);
 void searchRecord (studentNode* head, studentDetails search);
+void displayFirstRowTable();
 void displaySpecificRecords (studentNode* current, int studentCounter);
+bool isStringEqualNotCaseSensitive(const char string[], const char searchString[]);
 void displayAllRecords(studentNode* head, std::fstream& studentRecords);
 void freeMemory (studentNode* head);
 void pressToContinue();
@@ -175,7 +175,7 @@ void loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords)      
     studentRecords.open("student_records.txt", std::ios::in);
     if (!studentRecords.is_open())
     {
-        std::cerr << "File not found or unable to open.\n\n";
+        std::cerr << "File not found or unable to open.\n";
         return;
     }
     else
@@ -210,7 +210,7 @@ void loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords)      
                 temp->next = newStudent; 
             }
         }
-        std::cout<<"File successfully read!\n\n";
+        std::cout<<"File successfully read!\n";
     }
     studentRecords.close();
 }
@@ -342,9 +342,6 @@ void addRecord(studentNode*& head)
         default:
             break;
     }
-
-    std::cout<<std::endl;
-
     if (head == nullptr)
     {
         head = newStudent;
@@ -386,6 +383,11 @@ void searchRecord (studentNode* head, studentDetails search)
         }
         else
         {
+            int choiceSearch;
+            int studentCounter = 1;
+            bool foundStudent = false;
+            const char* lastNameCStr;
+            const char* searchLastNameCStr;
             system("cls");
             std::cout << " ________________________________________________________________________________________________\n"
                         "|                                                                                                |\n"
@@ -400,9 +402,6 @@ void searchRecord (studentNode* head, studentDetails search)
                         << "[6] Search by Year Level\n"
                         << "[7] Exit Search Record Menu\n\n"
                         << "Please type your selection [1-5]: ";
-            int choiceSearch;
-            int studentCounter = 1;
-            bool foundStudent = false;
             std::cin >> choiceSearch;
             switch (choiceSearch)
             {
@@ -427,17 +426,45 @@ void searchRecord (studentNode* head, studentDetails search)
                     {
                         if (search.studentID == current->studentInfo.studentID && foundStudent == false)
                         {
-                            displaySpecificRecords (current, studentCounter);
+                            displayFirstRowTable();
+                            displaySpecificRecords(current, studentCounter);
                             studentCounter++;
                             foundStudent = true;
                         }
                         current = current->next;
                     }
-                    if (foundStudent != true)
-                        std::cout << "\nNo student found with id " << search.studentID << "!\n\n";
+                    if (foundStudent)
+                        std::cout << "\n|" << std::setfill('-') << std::setw(158) << "" << "|\n";
+                    if (!foundStudent)
+                        std::cout << "\nNo student found with id " << search.studentID << "!\n";
                     pressToContinue();
                     break;
                 case 2:
+                    std::cin.clear();
+                    std::cin.ignore();
+                    std::cout << "\nEnter Last Name: ";
+                    getline(std::cin, search.lastName);
+                    while (current)
+                    {
+                        lastNameCStr = current->studentInfo.lastName.c_str();
+                        searchLastNameCStr = search.lastName.c_str();
+                        if (isStringEqualNotCaseSensitive(lastNameCStr, searchLastNameCStr) && foundStudent == false)
+                        {
+                            displayFirstRowTable();
+                            foundStudent = true;
+                        }
+                        if (isStringEqualNotCaseSensitive(lastNameCStr, searchLastNameCStr))
+                        {
+                            displaySpecificRecords (current, studentCounter);
+                            studentCounter++;
+                        }
+                        current = current->next;
+                    }
+                    if (foundStudent)
+                        std::cout << "\n|" << std::setfill('-') << std::setw(158) << "" << "|\n";
+                    if (!foundStudent)
+                        std::cout << "\nNo student found with last name '" << search.lastName << "'!";
+                    pressToContinue();
                     break;
                 case 3:
                     break;
@@ -449,7 +476,6 @@ void searchRecord (studentNode* head, studentDetails search)
                     break;
                 case 7:
                     inSearchRecord = false;
-                    std::cout << std::endl;
                     break;
                 default:
                     std::cin.clear();
@@ -461,7 +487,7 @@ void searchRecord (studentNode* head, studentDetails search)
     } while (inSearchRecord == true);
 }
 
-void displaySpecificRecords (studentNode* current, int studentCounter)
+void displayFirstRowTable()
 {
     std::cout << "\nSet window to fullscreen for better viewing.\n\n";
 
@@ -477,8 +503,11 @@ void displaySpecificRecords (studentNode* current, int studentCounter)
     std::setw(colGender-1) << std::left << "GENDER" << "| " <<
     std::setw(colprogram-1) << std::left << "PROGRAM" << "| " <<
     std::setw(colYearLevel-1) << std::left << "YEAR LEVEL" << "|";
+}
 
-            std::cout << "\n|" << std::setfill('-') <<
+void displaySpecificRecords (studentNode* current, int studentCounter)
+{
+    std::cout << "\n|" << std::setfill('-') <<
     std::setw(colStudentCounter) << "" << "|" <<
     std::setw(colStudentID) << "" << "|" <<
     std::setw(colLastName) << "" << "|" <<
@@ -499,7 +528,25 @@ void displaySpecificRecords (studentNode* current, int studentCounter)
     std::setw(colGender-1) << std::left << current->studentInfo.gender << "| " <<
     std::setw(colprogram-1) << std::left << current->studentInfo.program << "| "<<
     std::setw(colYearLevel-1) << std::left << current->studentInfo.yearLevel << "|";
-    std::cout << "\n|" << std::setfill('-') << std::setw(158) << "" << "|\n\n";
+}
+
+bool isStringEqualNotCaseSensitive(const char string[], const char searchString[])
+{
+
+    char copyString[50] = "";
+    for(int i = 0; i<strlen(string);i++){
+        copyString[i] = toupper(string[i]);
+    }
+
+    char copySearchString[50] = "";
+    for(int i = 0; i<strlen(searchString);i++){
+        copySearchString[i] = toupper(searchString[i]);
+    }
+
+    bool isStringEqual;
+    isStringEqual=strcmp(copyString,copySearchString)==0;
+
+    return isStringEqual;
 }
 
 void displayAllRecords(studentNode* head, std::fstream& studentRecords)
@@ -557,7 +604,7 @@ void displayAllRecords(studentNode* head, std::fstream& studentRecords)
             studentCounter++;
             head = head->next;
         }
-        std::cout << "\n|" << std::setfill('-') << std::setw(158) << "" << "|\n\n";
+        std::cout << "\n|" << std::setfill('-') << std::setw(158) << "" << "|\n";
     }
 
 }
@@ -606,6 +653,6 @@ void freeMemory (studentNode* head)
 
 void pressToContinue()
 {
-    std::cout << "Press any key to continue...";
+    std::cout << "\nPress any key to continue...";
     system("pause>0");
 }

@@ -4,3 +4,6 @@
 202114125,Espenilla,Kimberly,09/11/2001,cavite,Female,BSCSSE,4th Year
 20241512,Santos,Jericho,11/25/2003,Palawan,Male,BSECE,1st Year
 202412451,Grun,David,01/14/25,mindoro,Male,BSCE,2nd Year
+20121251,valEnCiA,jr,12/41/2322,62 sanfrancisco,Female,BSIT,4th Year
+12412354,gRuN,david,12/14/1212,123 mindoro,Female,BSCE,4th Year
+12412,vaLenCiA,jearr,12/12/1251,aisdoiasjdiosajd,Female,bscsse,4th Year
