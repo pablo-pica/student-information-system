@@ -7,7 +7,8 @@
 struct studentDetails              // Structure to hold student information
 {
     int studentID;
-    std::string fullName;
+    std::string lastName;
+    std::string firstName;
     std::string birthday;
     std::string address;
     char gender;
@@ -167,7 +168,8 @@ void loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords)      
 
             studentRecords >> newStudent->studentInfo.studentID;
             studentRecords.ignore();
-            getline(studentRecords, newStudent->studentInfo.fullName, ',');
+            getline(studentRecords, newStudent->studentInfo.lastName, ',');
+            getline(studentRecords, newStudent->studentInfo.firstName, ',');
             getline(studentRecords, newStudent->studentInfo.birthday, ',');
             getline(studentRecords, newStudent->studentInfo.address, ',');
             studentRecords >> newStudent->studentInfo.gender;
@@ -212,9 +214,9 @@ void saveRecordsToFile(studentNode* head, std::fstream& studentRecords)         
     {
         studentRecords << std::endl;
     }
-    studentRecords << temp->studentInfo.studentID << "," << temp->studentInfo.fullName << "," << temp->studentInfo.birthday << ","
-                    << temp->studentInfo.address << "," << temp->studentInfo.gender << "," << temp->studentInfo.degreeProgram << ","
-                    << temp->studentInfo.yearLevel;
+    studentRecords << temp->studentInfo.studentID << "," << temp->studentInfo.lastName << "," << temp->studentInfo.firstName << ","
+                    << temp->studentInfo.birthday << "," << temp->studentInfo.address << "," << temp->studentInfo.gender << ","
+                    << temp->studentInfo.degreeProgram << "," << temp->studentInfo.yearLevel;
     studentRecords.close();
 }
 
@@ -240,8 +242,10 @@ void addRecord(studentNode*& head)
     } while (newStudent->studentInfo.studentID < 0 || newStudent->studentInfo.studentID > 202499999);
     
     std::cin.ignore();
-    std::cout << "Enter Full Name: ";
-    getline(std::cin, newStudent->studentInfo.fullName);
+    std::cout << "Enter Last Name: ";
+    getline(std::cin, newStudent->studentInfo.lastName);
+    std::cout << "Enter First Name: ";
+    getline(std::cin, newStudent->studentInfo.firstName);
     std::cout << "Enter Birthday: ";
     getline(std::cin, newStudent->studentInfo.birthday);
     std::cout << "Enter Address: ";
@@ -304,7 +308,8 @@ void displayAllRecords(studentNode* head, std::fstream& studentRecords)
         //     <<"|| "<<setw(colThree)<<left<<"First Name"<<"|| "<<setw(colFour)<<left<<"Last Name"
         //     <<"|| "<<setw(colFive)<<left<<"GPA"<<"|";
         std::cout<< "Student ID: " << head->studentInfo.studentID << std::endl
-                << "Full Name: " << head->studentInfo.fullName << std::endl
+                << "Last Name: " << head->studentInfo.lastName << std::endl
+                << "First Name: " << head->studentInfo.firstName << std::endl
                 << "Birthday: " << head->studentInfo.birthday << std::endl
                 << "Address: " << head->studentInfo.address << std::endl
                 << "Gender: " << head->studentInfo.gender << std::endl
