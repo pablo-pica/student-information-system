@@ -34,6 +34,7 @@ int colprogram = 10;
 int colYearLevel = 12;
 
 bool loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords);
+bool isFileEmpty(const std::string& filename);
 void saveRecordsToFile(studentNode* head, std::fstream& studentRecords);
 void addRecord(studentNode*& head);
 bool checkIDMatch(studentNode* head, int studentidattempt);
@@ -124,30 +125,34 @@ int main()
             if (head == nullptr)
             {
                     std::cout<<"No data to be displayed. Please input at least one data.\n";
+                    pressToContinue();
                     break;
             }
-            do
-            {
-                std::cout << "\nSearch record with ID number: ";
-                while (!(std::cin >> search.studentID))
-                {
-                    std::cout << "\nNot a number!\n\n";
-                    std::cin.clear();
-                    std::cin.ignore(512, '\n');
-                    std::cout << "Search record with ID number: ";
-                }
-                if (search.studentID < 0 || search.studentID > 202499999)
-                {
-                    std::cout << "\nInvalid student ID! With year 2024 and below only!\n\n";
-                }
-            } while (search.studentID < 0 || search.studentID > 202499999);
-            if(checkIDMatch(head, search.studentID))
-            {
-                displaySpecificRecord(head, search.studentID);
-            }
             else
-                std::cout << "\nNo student found with id '" << search.studentID << "'!\n";
-            pressToContinue();
+            {
+                do
+                {
+                    std::cout << "Search record with ID number: ";
+                    while (!(std::cin >> search.studentID))
+                    {
+                        std::cout << "\nNot a number!\n\n";
+                        std::cin.clear();
+                        std::cin.ignore(512, '\n');
+                        std::cout << "Search record with ID number: ";
+                    }
+                    if (search.studentID < 0 || search.studentID > 202499999)
+                    {
+                        std::cout << "\nInvalid student ID! With year 2024 and below only!\n\n";
+                    }
+                } while (search.studentID < 0 || search.studentID > 202499999);
+                if(checkIDMatch(head, search.studentID))
+                {
+                    displaySpecificRecord(head, search.studentID);
+                }
+                else
+                    std::cout << "\nNo student found with id '" << search.studentID << "'!\n";
+                pressToContinue();
+            }
             break;
         case 5:
             system("cls");
@@ -158,33 +163,37 @@ int main()
             if (head == nullptr)
             {
                     std::cout<<"No data to be displayed. Please input at least one data.\n";
+                    pressToContinue();
                     break;
             }
-            do
-            {
-                std::cout << "\nDelete record with ID number: ";
-                while (!(std::cin >> search.studentID))
-                {
-                    std::cout << "\nNot a number!\n\n";
-                    std::cin.clear();
-                    std::cin.ignore(512, '\n');
-                    std::cout << "Search record with ID number: ";
-                }
-                if (search.studentID < 0 || search.studentID > 202499999)
-                {
-                    std::cout << "\nInvalid student ID! With year 2024 and below only!\n\n";
-                }
-            } while (search.studentID < 0 || search.studentID > 202499999);
-
-            if(checkIDMatch(head, search.studentID))
-            {
-                displaySpecificRecord(head, search.studentID);
-                if(deleteRecord(head, search))
-                    savedFile = false;
-            }
             else
-                std::cout << "\nNo student found with id '" << search.studentID << "'!\n";
-            pressToContinue();
+            {
+                do
+                {
+                    std::cout << "\nDelete record with ID number: ";
+                    while (!(std::cin >> search.studentID))
+                    {
+                        std::cout << "\nNot a number!\n\n";
+                        std::cin.clear();
+                        std::cin.ignore(512, '\n');
+                        std::cout << "Search record with ID number: ";
+                    }
+                    if (search.studentID < 0 || search.studentID > 202499999)
+                    {
+                        std::cout << "\nInvalid student ID! With year 2024 and below only!\n\n";
+                    }
+                    } while (search.studentID < 0 || search.studentID > 202499999);
+
+                    if(checkIDMatch(head, search.studentID))
+                    {
+                        displaySpecificRecord(head, search.studentID);
+                        if(deleteRecord(head, search))
+                            savedFile = false;
+                }
+                else
+                    std::cout << "\nNo student found with id '" << search.studentID << "'!\n";
+                pressToContinue();
+            }
             break;
         case 6:
             while (inSaveRecordsMenu == true)
@@ -298,6 +307,14 @@ bool loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords)
     }
     else
     {
+        std::string file = "student_records.txt" ;
+        if (isFileEmpty(file))
+        {
+            std::cout<<"No data loaded! File is currently empty. Please input at least one data.\n";\
+            studentRecords.close();
+            return true;
+        }
+
         std::cout << "Reading records from file...\n\n";
         while (!studentRecords.eof())
         {
@@ -329,9 +346,27 @@ bool loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords)
             }
         }
         std::cout<<"File successfully read!\n";
+        studentRecords.close();
     }
-    studentRecords.close();
     return true;
+}
+
+bool isFileEmpty(const std::string& filename)
+{
+    std::ifstream file(filename);
+    if (!file) {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return false;
+    }
+
+    file.seekg(0, std::ios::end);
+    if (file.tellg() == 0) { 
+        file.close(); 
+        return true;
+    }
+
+    file.close();
+    return false; 
 }
 
 void saveRecordsToFile(studentNode* head, std::fstream& studentRecords)
@@ -370,7 +405,7 @@ void addRecord(studentNode*& head)
         {
             std::cout << "Enter Student ID Number: ";
             while (!(std::cin>>newStudent->studentInfo.studentID))
-            { // only inputs integer
+            {
                 std::cout << "\nNot a number!\n\n";
                 std::cin.clear();
                 std::cin.ignore(512, '\n');
@@ -436,32 +471,39 @@ void addRecord(studentNode*& head)
         std::cin >> selectYearLevel;;
         if (selectYearLevel < 1 || selectYearLevel > 5)
         {
-            std::cout<<"\nInvalid year level selection!\n\n";
             std::cin.clear();
-        } 
-
+            std::cin.ignore(10000, '\n');
+            std::cout << "\nInvalid year level selection!\n\n";
+        }
+        else
+        {
+            switch (selectYearLevel)
+            {
+            case 1:
+                newStudent->studentInfo.yearLevel = "1st Year";
+                break;
+            case 2:
+                newStudent->studentInfo.yearLevel = "2nd Year";
+                break;
+            case 3:
+                newStudent->studentInfo.yearLevel = "3rd Year";
+                break;
+            case 4:
+                newStudent->studentInfo.yearLevel = "4th Year";            
+                break;
+            case 5:
+                newStudent->studentInfo.yearLevel = "5th Year";
+                break;
+            default:
+                std::cin.clear();
+                std::cin.ignore(10000, '\n');
+                std::cout << "\nInvalid selection! Press any key to try again.";
+                system("pause>0");
+                break;
+            }
+        }
     } while (selectYearLevel < 1 || selectYearLevel > 5);
 
-    switch (selectYearLevel)
-    {
-        case 1:
-            newStudent->studentInfo.yearLevel = "1st Year";
-            break;
-        case 2:
-            newStudent->studentInfo.yearLevel = "2nd Year";
-            break;
-        case 3:
-            newStudent->studentInfo.yearLevel = "3rd Year";
-            break;
-        case 4:
-            newStudent->studentInfo.yearLevel = "4th Year";            
-            break;
-        case 5:
-            newStudent->studentInfo.yearLevel = "5th Year";
-            break;
-        default:
-            break;
-    }
     if (head == nullptr)
     {
         head = newStudent;
@@ -797,12 +839,14 @@ bool isStringEqualNotCaseSensitive(const char string[], const char searchString[
 {
 
     char copyString[50] = "";
-    for(int i = 0; i<strlen(string);i++){
+    for(int i = 0; i<strlen(string);i++)
+    {
         copyString[i] = toupper(string[i]);
     }
 
     char copySearchString[50] = "";
-    for(int i = 0; i<strlen(searchString);i++){
+    for(int i = 0; i<strlen(searchString);i++)
+    {
         copySearchString[i] = toupper(searchString[i]);
     }
 
@@ -879,25 +923,32 @@ bool deleteRecord(studentNode*& head, studentDetails search)
     char confirmDeleteFile;
     bool inDeleteRecord = true;
 
-    while (current != nullptr && inDeleteRecord) {
-        if (current->studentInfo.studentID == search.studentID) {
+    while (current != nullptr && inDeleteRecord)
+    {
+        if (current->studentInfo.studentID == search.studentID)
+        {
             std::cout << "\nAre you sure you want to delete this record? [Y/N]: ";
             std::cin >> confirmDeleteFile;
 
-            if (confirmDeleteFile == 'y' || confirmDeleteFile == 'Y') {
-                if (prev == nullptr) { // If the node to delete is the head
+            if (confirmDeleteFile == 'y' || confirmDeleteFile == 'Y')
+            {
+                if (prev == nullptr) 
+                {
                     head = current->next;
-                } else {
+                } else
+                {
                     prev->next = current->next;
                 }
                 delete current;
                 std::cout << "\nFile successfully deleted\n";
                 return true;
-            } else if (confirmDeleteFile == 'n' || confirmDeleteFile == 'N') {
+            } else if (confirmDeleteFile == 'n' || confirmDeleteFile == 'N')
+            {
                 std::cout << "\nRedirecting you back to the menu...\n";
                 inDeleteRecord = false;
                 return false;
-            } else {
+            } else
+            {
                 std::cin.clear();
                 std::cin.ignore(10000, '\n');
                 std::cout << "\nInvalid selection! Press any key to try again.";   
