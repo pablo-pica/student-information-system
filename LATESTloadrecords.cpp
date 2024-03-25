@@ -666,7 +666,7 @@ void searchRecord (studentNode* head, studentDetails search)
                 case 5:
                     do
                     {
-                        std::cout << "\nSearch records with year level: [1 - 5]: ";
+                        std::cout << "\nSearch records with year level [1 - 5]: ";
                         std::cin >> selectYearLevel;
                         if (selectYearLevel < 1 || selectYearLevel > 5)
                         {
@@ -907,6 +907,7 @@ bool deleteRecord(studentNode*& head, studentDetails search)
         prev = current;
         current = current->next;
     }
+    return false;
 }
 
 void freeMemory (studentNode* head)
