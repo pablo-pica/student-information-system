@@ -33,8 +33,7 @@ int colGender = 10;
 int colprogram = 10;
 int colYearLevel = 12;
 
-// void deleteRecord(std::vector<Student> &students);
-void loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords);
+bool loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords);
 void saveRecordsToFile(studentNode* head, std::fstream& studentRecords);
 void addRecord(studentNode*& head);
 bool checkIDAvailability(studentNode* head, int studentidattempt);
@@ -43,7 +42,7 @@ void displayFirstRowTable();
 void displayRecordDetails(studentNode* current, int studentCounter);
 bool isStringEqualNotCaseSensitive(const char string[], const char searchString[]);
 void displayAllRecords(studentNode* head, std::fstream& studentRecords);
-void deleteRecord(studentNode* head, studentDetails search);
+void deleteRecord(studentNode*& head, studentDetails search);
 void freeMemory(studentNode* head);
 void pressToContinue();
 
@@ -52,16 +51,19 @@ int main()
     studentDetails search;
     bool inMenu = true;
     studentNode* head = nullptr;
+    char confirmSaveToFile;
+    char confirmExitProgram;
     std::fstream studentRecords;
     system("cls");
         std::cout << " ________________________________________________________________________________________________\n"
                     "|                                                                                                |\n"
                     "|                                    LOADING RECORDS FILE...                                     |\n"
                     "|________________________________________________________________________________________________|\n\n";
-    loadRecordsFromFile(head, studentRecords);
+    bool savedFile = loadRecordsFromFile(head, studentRecords);
     pressToContinue();
     do
     {
+        bool inSaveRecordsMenu = true;
         system("cls");
         std::cout << " ________________________________________________________________________________________________\n"
                     "|                                                                                                |\n"
@@ -72,10 +74,13 @@ int main()
                 << "[2] Search Record\n"
                 << "[3] Display All Records\n"
                 << "[4] Delete Record\n"
-                << "[5] Save Current Records to FIle\n"
-                << "[6] Exit\n\n"
-                << "Please type your selection [1-5]: ";
-
+                << "[5] Save Current Records to File\n"
+                << "[6] Exit\n\n";
+        if (savedFile)
+            std::cout << "";
+        else
+            std::cout << "Records not saved!\n\n";
+        std::cout << "Please type your selection [1-6]: ";
         int choice;
         std::cin >> choice;
         switch (choice)
@@ -87,6 +92,7 @@ int main()
                         "|                                           ADD RECORD                                           |\n"
                         "|________________________________________________________________________________________________|\n\n";
             addRecord(head);
+            savedFile = false;
             pressToContinue();
             break;
         case 2:
@@ -114,64 +120,104 @@ int main()
                         "|                                         DELETE RECORD                                          |\n"
                         "|________________________________________________________________________________________________|\n\n";
             deleteRecord(head, search);
+            savedFile = false;
             pressToContinue();
             break;
         case 5:
-            system("cls");
-            std::cout << " ________________________________________________________________________________________________\n"
-                        "|                                                                                                |\n"
-                        "|                                  SAVE CURRENT RECORDS TO FILE                                  |\n"
-                        "|________________________________________________________________________________________________|\n\n";
-            saveRecordsToFile(head, studentRecords);
+            while (inSaveRecordsMenu == true)
+            {
+                system("cls");
+                std::cout << " ________________________________________________________________________________________________\n"
+                            "|                                                                                                |\n"
+                            "|                                  SAVE CURRENT RECORDS TO FILE                                  |\n"
+                            "|________________________________________________________________________________________________|\n\n";
+                if (savedFile == true)
+                {
+                    std::cout << "File already saved!\n";
+                    break;
+                }
+                else
+                {
+                    std::cout << "Are you sure you want to save new changes? [Y/N]: ";
+                }
+                std::cin>>confirmSaveToFile;
+                if (confirmSaveToFile == 'y' || confirmSaveToFile == 'Y')
+                {
+                    saveRecordsToFile(head, studentRecords);
+                    inSaveRecordsMenu = false;
+                    savedFile = true;
+                    break;
+                }
+                else if (confirmSaveToFile == 'n' || confirmSaveToFile == 'N')
+                {    
+                    savedFile = false;
+                    std::cout<<"\nRedirecting you back to the menu...\n";
+                    std::cin.ignore(10000, '\n');   
+                    inSaveRecordsMenu = false;
+                }
+                else
+                {                                  
+                    std::cin.clear();
+                    std::cin.ignore(10000, '\n');
+                    std::cout<<"\nInvalid selection! Press any key to try again.";   
+                    system("pause>0");
+                }
+            }
             pressToContinue();
             break;
         case 6:
-            char confirmExitProgram;
-                while (inMenu == true) 
+            while (inMenu == true) 
+            {
+                system("cls");
+                std::cout << " ________________________________________________________________________________________________\n"
+                            "|                                                                                                |\n"
+                            "|                                          EXIT PROGRAM                                          |\n"
+                            "|________________________________________________________________________________________________|\n\n";
+                if (savedFile == true)
                 {
-                    system("cls");
-                    std::cout << " ________________________________________________________________________________________________\n"
-                                "|                                                                                                |\n"
-                                "|                                          EXIT PROGRAM                                          |\n"
-                                "|________________________________________________________________________________________________|\n\n";
-                    std::cout<<"Are you sure you want to exit and terminate the program? [y/n] ";
-                    std::cin>>confirmExitProgram;                                        // Exiting the program itself,
-                    if (confirmExitProgram == 'y' || confirmExitProgram == 'Y')          // and displaying members
-                    {
-                        std::cout<<"\nThank you for using the program!\n\n"
-                            <<"\tHere are the group members of Group 1 of TN12 in alphabetical order: \n"
-                            <<"\t1. Balagao, Aldrin Dave\n"
-                            <<"\t2. Bermejo, Christian Jude\n"
-                            <<"\t3. Espenilla, Kimberly\n"
-                            <<"\t4. Hermogenes, Franc Marcus\n"
-                            <<"\t5. Castillo, Francheska\n"
-                            <<"\t6. Tibayan, Asher\n"
-                            <<"\t7. Valencia, John Rainier\n\n"
-                            <<"Press any key to terminate the program.";
-                        system("pause>0");
-                        freeMemory(head);
-                        return 0;
-                    }
-                    else if (confirmExitProgram == 'n' || confirmExitProgram == 'N')        // go back to log in menu
-                    {    
-                        std::cout<<"\nRedirecting you back to the login menu...\n"
-                            <<"\nPress any key to continue...";
-                        system("pause>0");
-                        std::cin.ignore(10000, '\n');   // prevents enter from being inputted to 
-                        break;                          // loginMenuOption when it goes back to login menu
-                    }
-                    else
-                    {                                   // for edge cases
-                        std::cin.clear();
-                        std::cin.ignore(10000, '\n');
-                        std::cout<<"\nInvalid selection! Press any key to try again.";   
-                        system("pause>0");
-                    }
+                    std::cout << "Are you sure you want to exit and terminate the program? [Y/N] ";
                 }
+                else
+                {
+                    std::cout << "You have unsaved changes to your file!\n\nAre you sure you want to exit and terminate the program? [y/n] ";
+                }
+                std::cin >> confirmExitProgram;                                      
+                if (confirmExitProgram == 'y' || confirmExitProgram == 'Y')         
+                {
+                    std::cout<<"\nThank you for using the program!\n\n"
+                        <<"\tHere are the group members of Group 1 of TN12 in alphabetical order: \n"
+                        <<"\t1. Balagao, Aldrin Dave\n"
+                        <<"\t2. Bermejo, Christian Jude\n"
+                        <<"\t3. Espenilla, Kimberly\n"
+                        <<"\t4. Hermogenes, Franc Marcus\n"
+                        <<"\t5. Castillo, Francheska\n"
+                        <<"\t6. Tibayan, Asher\n"
+                        <<"\t7. Valencia, John Rainier\n\n"
+                        <<"Press any key to terminate the program.";
+                    system("pause>0");
+                    freeMemory(head);
+                    return 0;
+                }
+                else if (confirmExitProgram == 'n' || confirmExitProgram == 'N')
+                {    
+                    std::cout<<"\nRedirecting you back to the menu...\n";
+                    pressToContinue();
+                    std::cin.ignore(10000, '\n');
+                    break;                          
+                }
+                else
+                {                                  
+                    std::cin.clear();
+                    std::cin.ignore(10000, '\n');
+                    std::cout<<"\nInvalid selection! Press any key to try again.";   
+                    system("pause>0");
+                }
+                
+            }
                 break;
         default:
             std::cin.clear();
-            std::cin.ignore(10000, '\n'); // prevents input from looping
+            std::cin.ignore(10000, '\n');
             std::cout << "\nInvalid selection! Press any key to try again.";
             system("pause>0");
         }
@@ -179,13 +225,13 @@ int main()
     return 0;
 }
 
-void loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords)       // Function to read records from file
+bool loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords)
 {
     studentRecords.open("student_records.txt", std::ios::in);
     if (!studentRecords.is_open())
     {
         std::cerr << "File not found or unable to open.\n";
-        return;
+        return false;
     }
     else
     {
@@ -222,49 +268,33 @@ void loadRecordsFromFile(studentNode*& head, std::fstream& studentRecords)      
         std::cout<<"File successfully read!\n";
     }
     studentRecords.close();
+    return true;
 }
 
-void saveRecordsToFile(studentNode* head, std::fstream& studentRecords)                       // Function to save records to file
+void saveRecordsToFile(studentNode* head, std::fstream& studentRecords)
 {
-    char confirmSaveToFile;
-    std::cout<<"Are you sure you want to save new changes? [y/n] ";
-    std::cin>>confirmSaveToFile;                                        // Exiting the program itself,
-    if (confirmSaveToFile == 'y' || confirmSaveToFile == 'Y')          // and displaying members
+    int counter = 0;
+    std::cout << "\nSaving records to file...\n";
+    // studentRecords.open("student_records.txt", std::ios::app);
+    studentRecords.open("student_records.txt", std::ios::out | std::ios::trunc);
+    if (!studentRecords.is_open())
     {
-        std::cout << "\nSaving records to file...\n";
-        // studentRecords.open("student_records.txt", std::ios::app);
-        studentRecords.open("student_records.txt", std::ios::out);
-        if (!studentRecords.is_open())
-        {
-            std::cerr << "Unable to open file for writing.\n";
-            return;
-        }
-        studentNode* temp = head;
-        while (temp != nullptr)
-        {
-            studentRecords << std::endl << temp->studentInfo.studentID << "," << temp->studentInfo.lastName << "," <<
-                                            temp->studentInfo.firstName << "," << temp->studentInfo.birthday << "," <<
-                                            temp->studentInfo.address << "," << temp->studentInfo.gender << "," <<
-                                            temp->studentInfo.degreeProgram << "," << temp->studentInfo.yearLevel;
-            temp = temp->next;
-        }
-        studentRecords.close();
-        std::cout << "\nFile succesfully saved!\n";
+        std::cerr << "Unable to open file for writing.\n";
+        return;
     }
-    else if (confirmSaveToFile == 'n' || confirmSaveToFile == 'N')        
-    {    
-        std::cout<<"\nRedirecting you back to the menu...\n";
-        pressToContinue();
-        std::cin.ignore(10000, '\n');   
-        return;                          
+    studentNode* temp = head;
+    while (temp != nullptr)
+    {
+        studentRecords << std::endl << temp->studentInfo.studentID << "," << temp->studentInfo.lastName << "," <<
+                                        temp->studentInfo.firstName << "," << temp->studentInfo.birthday << "," <<
+                                        temp->studentInfo.address << "," << temp->studentInfo.gender << "," <<
+                                        temp->studentInfo.degreeProgram << "," << temp->studentInfo.yearLevel;
+        temp = temp->next;
+        counter++;
     }
-    else
-    {                                  
-        std::cin.clear();
-        std::cin.ignore(10000, '\n');
-        std::cout<<"\nInvalid selection! Press any key to try again.";   
-        system("pause>0");
-    }
+    studentRecords.close();
+    std::cout << "\nFile succesfully saved!\n";
+    return;
 }
 
 void addRecord(studentNode*& head)
@@ -422,7 +452,8 @@ void searchRecord (studentNode* head, studentDetails search)
         studentNode* current = head;
         if (current == nullptr)
         {
-            std::cout<<"No data to be displayed. Please input at least one data.\n\n";
+            std::cout<<"No data to be displayed. Please input at least one data.\n";
+            inSearchRecord = false;
         }
         else
         {
@@ -446,13 +477,13 @@ void searchRecord (studentNode* head, studentDetails search)
                 case 1:
                     do
                     {
-                        std::cout << "\nSearch records with ID number: ";
+                        std::cout << "\nSearch record with ID number: ";
                         while (!(std::cin >> search.studentID))
                         { // only inputs integer
                             std::cout << "\nNot a number!\n\n";
                             std::cin.clear();
                             std::cin.ignore(512, '\n');
-                            std::cout << "Search records with ID number: ";
+                            std::cout << "Search record with ID number: ";
                         }
                         if (search.studentID < 0 || search.studentID > 202499999)
                         {
@@ -744,7 +775,7 @@ void displayAllRecords(studentNode* head, std::fstream& studentRecords)
     int studentCounter = 1;
     if (head == nullptr)
     {
-        std::cout << "No data to be displayed. Please input at least one data.\n\n";
+        std::cout << "No data to be displayed. Please input at least one data.\n";
     }
     else
     {
@@ -791,15 +822,18 @@ void displayAllRecords(studentNode* head, std::fstream& studentRecords)
         }
         std::cout << "\n|" << std::setfill('-') << std::setw(158) << "" << "|\n";
     }
-
 }
 
-
-void deleteRecord(studentNode* head, studentDetails search)
+void deleteRecord(studentNode*& head, studentDetails search)
 {
+    if (head == nullptr)
+        {
+            std::cout<<"No data to be displayed. Please input at least one data.\n";
+            return;
+        }
     do
     {
-        std::cout << "\nDelete record with ID number: ";
+        std::cout << "Delete record with ID number: ";
         while (!(std::cin >> search.studentID))
         { // only inputs integer
             std::cout << "\nNot a number!\n\n";

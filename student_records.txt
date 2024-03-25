@@ -7,4 +7,3 @@
 20121251,valEnCiA,joHn rAiNiEr,12/41/2322,62 sanfrancisco,Female,BSIT,4th Year
 12412354,gRuN,david,12/14/1212,123 mindoro,Female,BSCE,4th Year
 69420,bryant,kobe,02/41/2004,lakerrsss,Male,LAkers,5th Year
-123,sentillas,charlene,123123,elbi,Female,psych,4th Year
