@@ -1,0 +1,7 @@
+
+202311373,Valencia,John Rainier,02/11/2004,Valenzuela City,Male,BSCSSE,1st Year
+202312269,Bermejo,Christian Jude,04/24/2005,Pasay City,Male,BSCSSE,1st Year
+202310190,Hermogenes,Franc Marcus,10/04/2004,Bulacan,Male,BSCSSE,1st Year
+202311926,Balagao,Aldrin Dave,09/03/2005,Bulacan,Male,BSCSSE,1st Year
+202311989,Espenilla,Kimberly,03/26/2005,Cavite,Female,BSCSSE,1st Year
+202310294,Tibayan,Asher Daniel,07/05/2005,Cavite,Male,BSCSSE,1st Year
