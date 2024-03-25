@@ -40,6 +40,7 @@ bool checkIDAvailability(studentNode* head, int studentidattempt);
 void searchRecord(studentNode* head, studentDetails search);
 void displayFirstRowTable();
 void displayRecordDetails(studentNode* current, int studentCounter);
+void displaySpecificRecord(studentNode* head, studentDetails search);
 bool isStringEqualNotCaseSensitive(const char string[], const char searchString[]);
 void displayAllRecords(studentNode* head, std::fstream& studentRecords);
 void deleteRecord(studentNode*& head, studentDetails search);
@@ -73,14 +74,15 @@ int main()
                 << "[1] Add New Record\n"
                 << "[2] Search Record\n"
                 << "[3] Display All Records\n"
-                << "[4] Delete Record\n"
-                << "[5] Save Current Records to File\n"
-                << "[6] Exit\n\n";
+                << "[4] Display Specific Record\n"
+                << "[5] Delete Record\n"
+                << "[6] Save Current Records to File\n"
+                << "[7] Exit Program\n\n";
         if (savedFile)
             std::cout << "";
         else
             std::cout << "Records not saved!\n\n";
-        std::cout << "Please type your selection [1-6]: ";
+        std::cout << "Please type your selection [1-7]: ";
         int choice;
         std::cin >> choice;
         switch (choice)
@@ -99,7 +101,7 @@ int main()
             system("cls");
             std::cout << " ________________________________________________________________________________________________\n"
                         "|                                                                                                |\n"
-                        "|                                         SEARCH RECORD                                          |\n"
+                        "|                                         SEARCH RECORDS                                         |\n"
                         "|________________________________________________________________________________________________|\n\n";
             searchRecord (head, search);
             pressToContinue();
@@ -117,13 +119,22 @@ int main()
             system("cls");
             std::cout << " ________________________________________________________________________________________________\n"
                         "|                                                                                                |\n"
+                        "|                                    DISPLAY SPECIFIC RECORD                                     |\n"
+                        "|________________________________________________________________________________________________|\n\n";
+            displaySpecificRecord(head, search);
+            pressToContinue();
+            break;
+        case 5:
+            system("cls");
+            std::cout << " ________________________________________________________________________________________________\n"
+                        "|                                                                                                |\n"
                         "|                                         DELETE RECORD                                          |\n"
                         "|________________________________________________________________________________________________|\n\n";
             deleteRecord(head, search);
             savedFile = false;
             pressToContinue();
             break;
-        case 5:
+        case 6:
             while (inSaveRecordsMenu == true)
             {
                 system("cls");
@@ -165,7 +176,7 @@ int main()
             }
             pressToContinue();
             break;
-        case 6:
+        case 7:
             while (inMenu == true) 
             {
                 system("cls");
@@ -460,55 +471,20 @@ void searchRecord (studentNode* head, studentDetails search)
             system("cls");
             std::cout << " ________________________________________________________________________________________________\n"
                         "|                                                                                                |\n"
-                        "|                                         SEARCH RECORD                                          |\n"
+                        "|                                         SEARCH RECORDS                                         |\n"
                         "|________________________________________________________________________________________________|\n\n";
             std::cout << "How do you want to search?\n\n"
-                        << "[1] Search by Student ID\n"
-                        << "[2] Search by Last Name\n"
-                        << "[3] Search by First Name\n"
-                        << "[4] Search by Gender\n"
-                        << "[5] Search by Degree Program\n"
-                        << "[6] Search by Year Level\n"
-                        << "[7] Exit Search Record Menu\n\n"
-                        << "Please type your selection [1-7]: ";
+                        << "[1] Search by Last Name\n"
+                        << "[2] Search by First Name\n"
+                        << "[3] Search by Gender\n"
+                        << "[4] Search by Degree Program\n"
+                        << "[5] Search by Year Level\n"
+                        << "[6] Exit to Main Menu\n\n"
+                        << "Please type your selection [1-6]: ";
             std::cin >> choiceSearch;
             switch (choiceSearch)
             {
                 case 1:
-                    do
-                    {
-                        std::cout << "\nSearch record with ID number: ";
-                        while (!(std::cin >> search.studentID))
-                        { // only inputs integer
-                            std::cout << "\nNot a number!\n\n";
-                            std::cin.clear();
-                            std::cin.ignore(512, '\n');
-                            std::cout << "Search record with ID number: ";
-                        }
-                        if (search.studentID < 0 || search.studentID > 202499999)
-                        {
-                            std::cout << "\nInvalid student ID! With year 2024 and below only!\n\n";
-                        }
-                    } while (search.studentID < 0 || search.studentID > 202499999);
-                    
-                    while (current)
-                    {
-                        if (search.studentID == current->studentInfo.studentID && foundStudent == false)
-                        {
-                            displayFirstRowTable();
-                            displayRecordDetails(current, studentCounter);
-                            studentCounter++;
-                            foundStudent = true;
-                        }
-                        current = current->next;
-                    }
-                    if (foundStudent)
-                        std::cout << "\n|" << std::setfill('-') << std::setw(158) << "" << "|\n";
-                    if (!foundStudent)
-                        std::cout << "\nNo student found with id '" << search.studentID << "'!\n";
-                    pressToContinue();
-                    break;
-                case 2:
                     std::cin.clear();
                     std::cin.ignore();
                     std::cout << "\nSearch records with last name: ";
@@ -535,7 +511,7 @@ void searchRecord (studentNode* head, studentDetails search)
                         std::cout << "\nNo student found with last name '" << search.lastName << "'!\n";
                     pressToContinue();
                     break;
-                case 3:
+                case 2:
                     std::cin.clear();
                     std::cin.ignore();
                     std::cout << "\nSearch records with fIrst name: ";
@@ -562,7 +538,7 @@ void searchRecord (studentNode* head, studentDetails search)
                         std::cout << "\nNo student found with first name '" << search.firstName << "'!\n";
                     pressToContinue();
                     break;
-                case 4:;
+                case 3:
                     do
                     {
                         std::cout << "\nSearch records with gender [M/F]: ";
@@ -576,7 +552,6 @@ void searchRecord (studentNode* head, studentDetails search)
                         }
                     } while (selectGender != 'M' && selectGender != 'm'
                             && selectGender != 'F' && selectGender != 'f');
-
                     switch (selectGender)
                     {
                         case 'm':
@@ -610,7 +585,7 @@ void searchRecord (studentNode* head, studentDetails search)
                         std::cout << "\nNo student found with gender '" << search.gender << "'!\n";
                     pressToContinue();
                     break;
-                case 5:
+                case 4:
                     std::cin.clear();
                     std::cin.ignore();
                     std::cout << "\nSearch records with degree program: ";
@@ -637,7 +612,7 @@ void searchRecord (studentNode* head, studentDetails search)
                         std::cout << "\nNo student found with degree program '" << search.degreeProgram << "'!\n";
                     pressToContinue();
                     break;
-                case 6:
+                case 5:
                     do
                     {
                         std::cout << "\nSearch records with year level: [1 - 5]: ";
@@ -690,7 +665,7 @@ void searchRecord (studentNode* head, studentDetails search)
                         std::cout << "\nNo student found with year level '" << search.yearLevel << "'!\n";
                     pressToContinue();
                     break;
-                case 7:
+                case 6:
                     inSearchRecord = false;
                     break;
                 default:
@@ -721,7 +696,7 @@ void displayFirstRowTable()
     std::setw(colYearLevel-1) << std::left << "YEAR LEVEL" << "|";
 }
 
-void displayRecordDetails(studentNode* current, int studentCounter)
+void displayRecordDetails(studentNode* head, int studentCounter)
 {
     std::cout << "\n|" << std::setfill('-') <<
     std::setw(colStudentCounter) << "" << "|" <<
@@ -736,14 +711,57 @@ void displayRecordDetails(studentNode* current, int studentCounter)
 
     std::cout << "| " << std::setfill(' ') << 
     std::setw(colStudentCounter-1) << std::left << studentCounter << "| " <<
-    std::setw(colStudentID-1) << std::left << current->studentInfo.studentID << "| " << 
-    std::setw(colLastName-1) << std::left << current->studentInfo.lastName << "| " <<
-    std::setw(colFirstName-1) << std::left << current->studentInfo.firstName << "| " <<
-    std::setw(colBirthday-1) << std::left << current->studentInfo.birthday << "| " <<
-    std::setw(colAddress-1) << std::left << current->studentInfo.address << "| " <<
-    std::setw(colGender-1) << std::left << current->studentInfo.gender << "| " <<
-    std::setw(colprogram-1) << std::left << current->studentInfo.degreeProgram << "| "<<
-    std::setw(colYearLevel-1) << std::left << current->studentInfo.yearLevel << "|";
+    std::setw(colStudentID-1) << std::left << head->studentInfo.studentID << "| " << 
+    std::setw(colLastName-1) << std::left << head->studentInfo.lastName << "| " <<
+    std::setw(colFirstName-1) << std::left << head->studentInfo.firstName << "| " <<
+    std::setw(colBirthday-1) << std::left << head->studentInfo.birthday << "| " <<
+    std::setw(colAddress-1) << std::left << head->studentInfo.address << "| " <<
+    std::setw(colGender-1) << std::left << head->studentInfo.gender << "| " <<
+    std::setw(colprogram-1) << std::left << head->studentInfo.degreeProgram << "| "<<
+    std::setw(colYearLevel-1) << std::left << head->studentInfo.yearLevel << "|";
+}
+
+void displaySpecificRecord(studentNode* head, studentDetails search)
+{
+    int studentCounter = 1;
+    bool foundStudent = false;
+    studentNode* current = head;
+    if (current == nullptr)
+    {
+            std::cout<<"No data to be displayed. Please input at least one data.\n";
+            return;
+    }
+    do
+    {
+        std::cout << "\nSearch record with ID number: ";
+        while (!(std::cin >> search.studentID))
+        {
+            std::cout << "\nNot a number!\n\n";
+            std::cin.clear();
+            std::cin.ignore(512, '\n');
+            std::cout << "Search record with ID number: ";
+        }
+        if (search.studentID < 0 || search.studentID > 202499999)
+        {
+            std::cout << "\nInvalid student ID! With year 2024 and below only!\n\n";
+        }
+    } while (search.studentID < 0 || search.studentID > 202499999);
+    
+    while (current)
+    {
+        if (search.studentID == current->studentInfo.studentID && foundStudent == false)
+        {
+            displayFirstRowTable();
+            displayRecordDetails(current, studentCounter);
+            studentCounter++;
+            foundStudent = true;
+        }
+        current = current->next;
+    }
+    if (foundStudent)
+        std::cout << "\n|" << std::setfill('-') << std::setw(158) << "" << "|\n";
+    if (!foundStudent)
+        std::cout << "\nNo student found with id '" << search.studentID << "'!\n";
 }
 
 bool isStringEqualNotCaseSensitive(const char string[], const char searchString[])
